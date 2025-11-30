@@ -26,12 +26,13 @@ ADMIN_ID = int(os.getenv("ADMIN_ID", 0))
 
 # Chemins des liens
 MINI_APP_URL = os.getenv("MINI_APP_URL")
+INSTAGRAM_URL = os.getenv("INSTAGRAM_URL")
+SIGNAL_URL = os.getenv("SIGNAL_URL")
 TELEGRAM_URL = os.getenv("TELEGRAM_URL")
-CANAL_SECOURS_URL = os.getenv("CANAL_SECOURS_URL")
-WHATSAPP_URL = os.getenv("WHATSAPP_URL")
+POTATO_URL = os.getenv("POTATO_URL")
 
 # Chemin de l'image (à ajouter dans le dossier)
-IMAGE_PATH = os.getenv("IMAGE_PATH", "hashburgur_logo.png")
+IMAGE_PATH = os.getenv("IMAGE_PATH", "caligaz_logo.png")
 
 # Fichier pour stocker les utilisateurs
 USERS_FILE = os.getenv("USERS_FILE", "users.json")
@@ -70,32 +71,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     save_user(user.id)
     
     # Création du clavier avec les boutons
-    keyboard = [
-        [InlineKeyboardButton("🛒 Mini App", web_app=WebAppInfo(url=MINI_APP_URL))],
-        [InlineKeyboardButton("📱 Lien Telegram", url=TELEGRAM_URL)],
-        [InlineKeyboardButton("🆘 Canal Secours", url=CANAL_SECOURS_URL)]
-    ]
-    # Ajouter le bouton WhatsApp seulement si l'URL est définie
-    if WHATSAPP_URL:
-        keyboard.append([InlineKeyboardButton("📱 Lien WhatsApp", url=WHATSAPP_URL)])
+    keyboard = []
+    if INSTAGRAM_URL:
+        keyboard.append([InlineKeyboardButton("📷 Instagram", url=INSTAGRAM_URL)])
+    if SIGNAL_URL:
+        keyboard.append([InlineKeyboardButton("📱 Signal", url=SIGNAL_URL)])
+    if TELEGRAM_URL:
+        keyboard.append([InlineKeyboardButton("💬 Telegram", url=TELEGRAM_URL)])
+    if POTATO_URL:
+        keyboard.append([InlineKeyboardButton("🥔 Potato", url=POTATO_URL)])
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     # Message de bienvenue (HTML pour éviter les problèmes de parsing)
-    welcome_message = """<b>🍔 HashBurgur 🍔</b>
+    welcome_message = """<b>🔥 Cali Gaz 🔥</b>
 
-Hey ! 👋
+Salut ! 👋
 
-Tu es sur le bot officiel <b>HashBurgur</b>. Accède rapidement à tous nos services et produits.
+Rejoins notre communauté et accède à tous nos réseaux.
 
-<b>🚀 Navigation rapide :</b>
-• Clique sur les boutons ci-dessous pour accéder aux différents services
-• Utilise /start pour revenir au menu principal
-• Reste connecté pour ne rien rater
+Choisis ton réseau 👇
 
-<b>📞 Besoin d'aide ?</b>
-Contacte-nous directement : @hh_hb06
+<b>💡 Astuce :</b> Utilise /start pour réactualiser le menu
 
-Sélectionne une option ci-dessous 👇"""
+<b>📞 Contact direct :</b> @caligazOff2"""
     
     # Envoi de l'image si elle existe, sinon juste le message
     try:
@@ -116,21 +114,17 @@ Sélectionne une option ci-dessous 👇"""
     except Exception as e:
         logger.error(f"Erreur lors de l'envoi de l'image: {e}")
         # En cas d'erreur, envoyer sans formatage
-        welcome_message_plain = """🍔 HashBurgur 🍔
+        welcome_message_plain = """🔥 Cali Gaz 🔥
 
-Hey ! 👋
+Salut ! 👋
 
-Tu es sur le bot officiel HashBurgur. Accède rapidement à tous nos services et produits.
+Rejoins notre communauté et accède à tous nos réseaux.
 
-🚀 Navigation rapide :
-• Clique sur les boutons ci-dessous pour accéder aux différents services
-• Utilise /start pour revenir au menu principal
-• Reste connecté pour ne rien rater
+Choisis ton réseau 👇
 
-📞 Besoin d'aide ?
-Contacte-nous directement : @hh_hb06
+💡 Astuce : Utilise /start pour réactualiser le menu
 
-Sélectionne une option ci-dessous 👇"""
+📞 Contact direct : @caligazOff2"""
         await update.message.reply_text(
             welcome_message_plain,
             reply_markup=reply_markup

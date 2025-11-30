@@ -6,7 +6,7 @@ users.json
 
 # Images
 *.png
-!hashburgur_logo.png
+!caligaz_logo.png
 *.jpg
 *.jpeg
 *.gif
