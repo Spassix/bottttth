@@ -80,20 +80,20 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         keyboard.append([InlineKeyboardButton("📱 Lien WhatsApp", url=WHATSAPP_URL)])
     reply_markup = InlineKeyboardMarkup(keyboard)
     
-    # Message de bienvenue
-    welcome_message = """**🍔 HashBurgur 🍔**
+    # Message de bienvenue (HTML pour éviter les problèmes de parsing)
+    welcome_message = """<b>🍔 HashBurgur 🍔</b>
 
 Hey ! 👋
 
-Tu es sur le bot officiel **HashBurgur**. Accède rapidement à tous nos services et produits.
+Tu es sur le bot officiel <b>HashBurgur</b>. Accède rapidement à tous nos services et produits.
 
-**🚀 Navigation rapide :**
+<b>🚀 Navigation rapide :</b>
 • Clique sur les boutons ci-dessous pour accéder aux différents services
 • Utilise /start pour revenir au menu principal
 • Reste connecté pour ne rien rater
 
-**📞 Besoin d'aide ?**
-🐦‍⬛ Contacte-nous directement : @hh_hb06
+<b>📞 Besoin d'aide ?</b>
+Contacte-nous directement : @hh_hb06
 
 Sélectionne une option ci-dessous 👇"""
     
@@ -105,20 +105,35 @@ Sélectionne une option ci-dessous 👇"""
                     photo=photo,
                     caption=welcome_message,
                     reply_markup=reply_markup,
-                    parse_mode=ParseMode.MARKDOWN
+                    parse_mode=ParseMode.HTML
                 )
         else:
             await update.message.reply_text(
                 welcome_message,
                 reply_markup=reply_markup,
-                parse_mode=ParseMode.MARKDOWN
+                parse_mode=ParseMode.HTML
             )
     except Exception as e:
         logger.error(f"Erreur lors de l'envoi de l'image: {e}")
+        # En cas d'erreur, envoyer sans formatage
+        welcome_message_plain = """🍔 HashBurgur 🍔
+
+Hey ! 👋
+
+Tu es sur le bot officiel HashBurgur. Accède rapidement à tous nos services et produits.
+
+🚀 Navigation rapide :
+• Clique sur les boutons ci-dessous pour accéder aux différents services
+• Utilise /start pour revenir au menu principal
+• Reste connecté pour ne rien rater
+
+📞 Besoin d'aide ?
+Contacte-nous directement : @hh_hb06
+
+Sélectionne une option ci-dessous 👇"""
         await update.message.reply_text(
-            welcome_message,
-            reply_markup=reply_markup,
-            parse_mode=ParseMode.MARKDOWN
+            welcome_message_plain,
+            reply_markup=reply_markup
         )
 
 
@@ -134,10 +149,10 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Vérifier si un message a été fourni
     if not context.args:
         await update.message.reply_text(
-            "📢 **Utilisation de /broadcast:**\n\n"
+            "<b>📢 Utilisation de /broadcast:</b>\n\n"
             "Envoyez votre message après la commande:\n"
-            "`/broadcast Votre message ici`",
-            parse_mode=ParseMode.MARKDOWN
+            "<code>/broadcast Votre message ici</code>",
+            parse_mode=ParseMode.HTML
         )
         return
     
@@ -150,16 +165,16 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not users:
         await update.message.reply_text(
             "⚠️ Aucun utilisateur trouvé dans la base de données.",
-            parse_mode=ParseMode.MARKDOWN
+            parse_mode=ParseMode.HTML
         )
         return
     
     # Envoyer le message de confirmation
     await update.message.reply_text(
-        f"📢 **Diffusion en cours...**\n\n"
+        f"<b>📢 Diffusion en cours...</b>\n\n"
         f"Message: {message_text}\n"
         f"Destinataires: {len(users)} utilisateur(s)",
-        parse_mode=ParseMode.MARKDOWN
+        parse_mode=ParseMode.HTML
     )
     
     # Diffuser le message à tous les utilisateurs
@@ -171,7 +186,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await context.bot.send_message(
                 chat_id=user_id,
                 text=message_text,
-                parse_mode=ParseMode.MARKDOWN
+                parse_mode=None
             )
             success_count += 1
         except Exception as e:
@@ -180,11 +195,11 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     # Envoyer le rapport final
     await update.message.reply_text(
-        f"✅ **Diffusion terminée!**\n\n"
+        f"<b>✅ Diffusion terminée!</b>\n\n"
         f"✅ Envoyé avec succès: {success_count}\n"
         f"❌ Échecs: {fail_count}\n"
         f"📊 Total: {len(users)}",
-        parse_mode=ParseMode.MARKDOWN
+        parse_mode=ParseMode.HTML
     )
     
     logger.info(f"Admin {user.id} a diffusé un message à {success_count} utilisateurs")
